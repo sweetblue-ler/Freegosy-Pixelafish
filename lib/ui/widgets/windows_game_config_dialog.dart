@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freegosy/providers/romm_provider.dart';
+import 'package:freegosy/ui/widgets/windows_pcgw_search_dialog.dart';
 import '../../core/romm/romm_models.dart';
 import '../../core/windows/pcgamingwiki_service.dart';
 import 'package:dio/dio.dart';
@@ -257,6 +258,7 @@ class _WindowsGameConfigDialogState extends State<WindowsGameConfigDialog> {
                 const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: () async {
+                    final result = await showDialog<Map<String, String>>(context: context, builder: (ctx) => WindowsPcgwDialog());
                     final PcGamingWikiService wikiService = PcGamingWikiService(Dio());
                     final existingGameDir = await widget.directoryService!.findExistingRomPath(widget.game);
                     final locations = await wikiService.getSaveLocations(_manualWikiSearchController.text.isEmpty ? widget.game.name : _manualWikiSearchController.text, gameDir: existingGameDir!);
