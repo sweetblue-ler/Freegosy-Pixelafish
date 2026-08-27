@@ -258,7 +258,8 @@ class _WindowsGameConfigDialogState extends State<WindowsGameConfigDialog> {
                 const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: () async {
-                    final result = await showDialog<Map<String, String>>(context: context, builder: (ctx) => WindowsPcgwDialog());
+                    //TODO: Experimenting with PCGW Search UI
+                    //final result = await showDialog<Map<String, String>>(context: context, builder: (ctx) => WindowsPcgwDialog());
                     final PcGamingWikiService wikiService = PcGamingWikiService(Dio());
                     final existingGameDir = await widget.directoryService!.findExistingRomPath(widget.game);
                     final locations = await wikiService.getSaveLocations(_manualWikiSearchController.text.isEmpty ? widget.game.name : _manualWikiSearchController.text, gameDir: existingGameDir!);
@@ -267,15 +268,15 @@ class _WindowsGameConfigDialogState extends State<WindowsGameConfigDialog> {
                         debugPrint('[WindowsSave]   raw: ${loc['raw']} → path: ${loc['path']}');
                       }
                       final resolved = locations.first['path'];
-                      var resolvedFileFilter = locations.first['raw']!.split('\\').last;
-                              // PCGW Pages sometimes describes wild cards as "file*.ext", we need to change it into "*.ext"
-                      if (resolvedFileFilter.contains('file*')) resolvedFileFilter = resolvedFileFilter.replaceFirst('file*', '*');
+                      var resolvedFileFilter = RegExp(r'\.[a-zA-Z0-9]{2,4}$').hasMatch(locations.first['raw']!) ? locations.first['raw']?.split('\\').last : '';
+                      // PCGW Pages sometimes describes wild cards as "file*.ext", we need to change it into "*.ext"
+                      if (resolvedFileFilter!.contains('file*')) resolvedFileFilter = resolvedFileFilter.replaceFirst('file*', '*');
                       if (resolved != null) {
                         final names = resolved;
                         setState(() {
                           _triedAutoDetect = true;
                           _wikiSavePathController.text = names;
-                          if (resolvedFileFilter.isNotEmpty) _wikiFileFilterController.text = resolvedFileFilter;
+                          _wikiFileFilterController.text = resolvedFileFilter as String;
                         });
                       }
                     } else if (_wikiSavePathController.text.isEmpty) {
