@@ -10,9 +10,12 @@ import '../../core/storage/directory_service.dart';
 import '../../core/storage/app_preferences.dart';
 
 class WindowsPcgwDialog extends StatefulWidget {
+  final List<String> results;
+
 
   const WindowsPcgwDialog({
     super.key,
+    required this.results,
   });
 
   @override
@@ -20,37 +23,38 @@ class WindowsPcgwDialog extends StatefulWidget {
 }
 
 class _WindowsPcgwDialogState extends State<WindowsPcgwDialog> {
-
-  late bool _triedAutoDetect;
+  late List<String> _results;
 
   @override
   void initState() {
     super.initState();
-
-    _triedAutoDetect = false;
+    _results = widget.results;
   }
 
   @override
   void dispose() {
     super.dispose();
+    _results.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return AlertDialog (
       title: Text('Search'),
-            content: SingleChildScrollView(
-              child: Column (
-                mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Prout',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-              ])
-            )
-    )
-    ;
+      content: SingleChildScrollView (
+      child: Container (
+        height: 300,
+        width: 300,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: _results.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile (
+              title: Text(_results.elementAt(index)),
+            );
+          },
+        )
+      ))
+    );
   }
 }
